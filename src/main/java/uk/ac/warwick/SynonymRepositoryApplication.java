@@ -9,6 +9,4 @@ public class SynonymRepositoryApplication {
     public static void main(String[] args) {
         SpringApplication.run(SynonymRepositoryApplication.class, args);
     }
-
-
 }

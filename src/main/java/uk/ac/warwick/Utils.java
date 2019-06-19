@@ -38,7 +38,7 @@ public class Utils {
         return queryNode.get("redirects").elements().next().get("to").asText();
     }
 
-    public static List<String> getRedirects(String title) {
+    public static List<String> getSynonyms(String title) {
         List<String> res = new ArrayList();
         if(!isRedirected(title)){
             String url = WIKI_API_PREFIX+"?action=query&prop=redirects&format=json&titles=" + title;
@@ -52,7 +52,7 @@ public class Utils {
         }
         else{
             String redirectTitle = getRedirectTitle(title);
-            List<String> redirects = getRedirects(redirectTitle);
+            List<String> redirects = getSynonyms(redirectTitle);
             redirects.add(redirectTitle);
             return redirects;
         }
