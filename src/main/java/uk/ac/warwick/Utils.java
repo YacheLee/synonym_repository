@@ -45,11 +45,18 @@ public class Utils {
         if(!isRedirected(title)){
             String url = WIKI_API_PREFIX+"?action=query&prop=redirects&format=json&titles=" + title;
             ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
-            Iterator<JsonNode> redirects = forEntity.getBody().get("query").get("pages").elements().next().get("redirects").elements();
-            while(redirects.hasNext()){
-                ObjectNode redirect = (ObjectNode)redirects.next();
-                res.add(redirect.get("title").asText());
+            Iterator<JsonNode> pages = forEntity.getBody().get("query").get("pages").elements();
+            if (pages.hasNext()) {
+                JsonNode page = pages.next();
+                if(page.has("redirects")){
+                    Iterator<JsonNode> redirects = page.get("redirects").elements();
+                    while(redirects.hasNext()){
+                        ObjectNode redirect = (ObjectNode)redirects.next();
+                        res.add(redirect.get("title").asText());
+                    }
+                }
             }
+
             return res;
         }
         else{
