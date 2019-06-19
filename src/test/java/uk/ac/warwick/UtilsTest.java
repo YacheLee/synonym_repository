@@ -1,21 +1,23 @@
 package uk.ac.warwick;
 
-import org.jsoup.nodes.Document;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
-
 public class UtilsTest {
     @Test
-    public void getDocumentTest() throws IOException {
-        Document document = Utils.getDocument("https://www.wikipedia.org");
-        Assert.assertEquals(document.select("title").text(), "Wikipedia");
+    public void getPageContentTest(){
+        Assert.assertEquals(Utils.getPageContent("台大"), "#REDIRECT [[國立臺灣大學]]");
     }
 
     @Test
-    public void isRedirectionTest() throws IOException {
-        Assert.assertTrue(Utils.isRedirection("台大"));
-        Assert.assertFalse(Utils.isRedirection("國立臺灣大學"));
+    public void isRedirectedTest() {
+        Assert.assertTrue(Utils.isRedirected("台大"));
+        Assert.assertFalse(Utils.isRedirected("國立臺灣大學"));
+    }
+
+    @Test
+    public void getRedirectTitleTest(){
+        Assert.assertEquals(Utils.getRedirectTitle("台大"), "國立臺灣大學");
+        Assert.assertEquals(Utils.getRedirectTitle("國立臺灣大學"), "國立臺灣大學");
     }
 }
