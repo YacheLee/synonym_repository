@@ -1,9 +1,13 @@
 package uk.ac.warwick;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,5 +36,25 @@ public class Utils {
             return title;
 
         return queryNode.get("redirects").elements().next().get("to").asText();
+    }
+
+    public static List<String> getRedirects(String title) {
+        List<String> res = new ArrayList();
+        if(!isRedirected(title)){
+            String url = WIKI_API_PREFIX+"?action=query&prop=redirects&format=json&titles=" + title;
+            ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
+            Iterator<JsonNode> redirects = forEntity.getBody().get("query").get("pages").elements().next().get("redirects").elements();
+            while(redirects.hasNext()){
+                ObjectNode redirect = (ObjectNode)redirects.next();
+                res.add(redirect.get("title").asText());
+            }
+            return res;
+        }
+        else{
+            String redirectTitle = getRedirectTitle(title);
+            List<String> redirects = getRedirects(redirectTitle);
+            redirects.add(redirectTitle);
+            return redirects;
+        }
     }
 }
