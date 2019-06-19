@@ -16,8 +16,13 @@ public class UtilsTest {
     }
 
     @Test
-    public void isRedirectedTest() throws ThisPageDoesNotExist {
+    public void isRedirectedTest_True() throws ThisPageDoesNotExist {
+        Assert.assertTrue(Utils.isRedirected("台灣"));
         Assert.assertTrue(Utils.isRedirected("台大"));
+    }
+
+    @Test
+    public void isRedirectedTest_False() throws ThisPageDoesNotExist {
         Assert.assertFalse(Utils.isRedirected("國立臺灣大學"));
     }
 

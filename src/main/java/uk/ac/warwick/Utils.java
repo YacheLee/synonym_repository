@@ -9,12 +9,9 @@ import uk.ac.warwick.exceptions.ThisPageDoesNotExist;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Utils {
     final static String WIKI_API_PREFIX = "https://zh.wikipedia.org/w/api.php";
-    final static Pattern REDIRECT_PATTERN = Pattern.compile("\\#REDIRECT \\[\\[[\b\\W\\w\b]+\\]\\]");
     final static RestTemplate restTemplate = new RestTemplate();
 
     public static String getPageContent(String title) throws ThisPageDoesNotExist {
@@ -28,9 +25,9 @@ public class Utils {
     }
 
     public static boolean isRedirected(String title) throws ThisPageDoesNotExist {
-        String pageContent = getPageContent(title);
-        Matcher m1 = REDIRECT_PATTERN.matcher(pageContent);
-        return m1.find();
+        String url = WIKI_API_PREFIX+"?action=query&format=json&redirects&titles=" + title;
+        ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
+        return forEntity.getBody().get("query").has("redirects");
     }
 
     public static String getRedirectTitle(String title) {
