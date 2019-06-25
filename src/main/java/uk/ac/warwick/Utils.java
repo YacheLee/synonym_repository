@@ -11,6 +11,8 @@ import uk.ac.warwick.exceptions.ThisPageDoesNotExist;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
     final static String WIKI_API_PREFIX = "https://zh.wikipedia.org/w/api.php";
@@ -82,6 +84,9 @@ public class Utils {
             redirects.add(redirectTitle);
             return redirects;
         }
+        else if(isDisambiguousTerm(title)){
+            return getDisambiguousTerms(title);
+        }
         else{
             String url = getUrlBase(title).queryParam("prop", "redirects").build().toString();
             ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
@@ -98,6 +103,24 @@ public class Utils {
             }
             return res;
         }
+    }
+
+    private static String removeSquares(String txt) {
+        return txt.replaceAll("\\[\\[(.*?)\\]\\]", "$1");
+    }
+
+    public static List<String> getDisambiguousTerms(String title) throws ThisPageDoesNotExist {
+        String content = getPageContent(title);
+        String insidePattern = ".+";
+        String completePattern = "\\[\\[" + insidePattern + "\\]\\]";
+        Pattern pattern = Pattern.compile(completePattern);
+        Matcher matcher = pattern.matcher(content);
+
+        List<String> list = new ArrayList();
+        while(matcher.find()){
+            list.add(removeSquares(matcher.group()));
+        }
+        return list;
     }
 
     private static UriComponentsBuilder getUrlBase(String title){

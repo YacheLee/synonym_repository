@@ -46,7 +46,9 @@ public class UtilsTest {
 
     @Test
     public void getSynonymsWithoutRedirection_Empty() throws ThisPageDoesNotExist {
-        Assert.assertEquals(Utils.getSynonyms("彰化").toString(), "[]");
+        Assert.assertEquals(Utils.getSynonyms("彰化").toString(), "[彰化縣, 彰化縣 (清朝), 彰化郡, 彰化市, 彰化市 (省轄市), 彰化市 (州轄市), 彰化街]");
+        Assert.assertEquals(Utils.getSynonyms("北大").toString(), "[北京大學, 國立臺北大學, 东北大学 (日本), 北海道大學, 北陸大學, 北大鎮, 北大路 (新竹市)]");
+        Assert.assertEquals(Utils.getSynonyms("中大").toString(), "[香港中文大學, 香港中文大學（深圳）, 中山大學, 國立中央大學 (南京), 國立中央大學 (汪精衛政府), 國立中央大學, 中央大學 (日本), 中央大學 (韓國), 江苏中大集团, 物产中大集团, 浙江中大集团, 中大建築股份有限公司|中大建築股份]");
     }
 
     @Test
