@@ -50,7 +50,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void isDisambiguousTermTest() throws ThisPageDoesNotExist {
+    public void isDisambiguousTermTest() {
         Assert.assertTrue(Utils.isDisambiguousTerm("北大"));
         Assert.assertTrue(Utils.isDisambiguousTerm("彰化"));
         Assert.assertTrue(Utils.isDisambiguousTerm("中大"));
