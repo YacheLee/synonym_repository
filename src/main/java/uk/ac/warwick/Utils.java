@@ -69,7 +69,7 @@ public class Utils {
         return categories;
     }
 
-    public static boolean isDisambiguousTerm(String title) throws ThisPageDoesNotExist {
+    public static boolean isDisambiguousTerm(String title) {
         List<String> categories = getCategories(title);
         return categories.stream().anyMatch(s -> s.contains("消歧義"));
     }
