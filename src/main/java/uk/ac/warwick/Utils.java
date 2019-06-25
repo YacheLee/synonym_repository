@@ -20,14 +20,14 @@ public class Utils {
 
     public static String getPageContent(String title) throws ThisPageDoesNotExist {
         String url = getUrlBase(title)
-                .queryParam("prop","revisions")
-                .queryParam("rvlimit","1")
-                .queryParam("rvprop","content")
+                .queryParam("prop", "revisions")
+                .queryParam("rvlimit", "1")
+                .queryParam("rvprop", "content")
                 .build().toString();
 
         ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
         JsonNode pagesNode = forEntity.getBody().get("query").get("pages");
-        if(pagesNode.has("-1") || !pagesNode.iterator().hasNext())
+        if (pagesNode.has("-1") || !pagesNode.iterator().hasNext())
             throw new ThisPageDoesNotExist();
 
         return pagesNode.iterator().next().get("revisions").elements().next().get("*").asText();
@@ -44,7 +44,7 @@ public class Utils {
 
         ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
         JsonNode queryNode = forEntity.getBody().get("query");
-        if(!queryNode.has("redirects"))
+        if (!queryNode.has("redirects"))
             return title;
 
         return queryNode.get("redirects").elements().next().get("to").asText();
@@ -61,9 +61,9 @@ public class Utils {
         JsonNode page = queryNode.get("pages").elements().next();
 
         List<String> categories = new ArrayList<>();
-        if(page.has("categories")){
+        if (page.has("categories")) {
             Iterator<JsonNode> iterator = page.get("categories").iterator();
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 JsonNode categoryNode = iterator.next();
                 categories.add(categoryNode.get("title").asText());
             }
@@ -78,25 +78,23 @@ public class Utils {
 
     public static List<String> getSynonyms(String title) throws ThisPageDoesNotExist {
         List<String> res = new ArrayList();
-        if(isRedirected(title)){
+        if (isRedirected(title)) {
             String redirectTitle = getRedirectTitle(title);
             List<String> redirects = getSynonyms(redirectTitle);
             redirects.add(redirectTitle);
             return redirects;
-        }
-        else if(isDisambiguousTerm(title)){
+        } else if (isDisambiguousTerm(title)) {
             return getDisambiguousTerms(title);
-        }
-        else{
+        } else {
             String url = getUrlBase(title).queryParam("prop", "redirects").build().toString();
             ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
             Iterator<JsonNode> pages = forEntity.getBody().get("query").get("pages").elements();
             if (pages.hasNext()) {
                 JsonNode page = pages.next();
-                if(page.has("redirects")){
+                if (page.has("redirects")) {
                     Iterator<JsonNode> redirects = page.get("redirects").elements();
-                    while(redirects.hasNext()){
-                        ObjectNode redirect = (ObjectNode)redirects.next();
+                    while (redirects.hasNext()) {
+                        ObjectNode redirect = (ObjectNode) redirects.next();
                         res.add(redirect.get("title").asText());
                     }
                 }
@@ -105,8 +103,38 @@ public class Utils {
         }
     }
 
+    public static List<List<String>> getPolysemy(String content, int n) {
+        String insidePattern = ".*?";
+        String completePattern = "、" + insidePattern + "、";
+
+        Pattern pattern = Pattern.compile(completePattern);
+        Matcher matcher = pattern.matcher(content);
+
+        List res = new ArrayList();
+        while (matcher.find()) {
+            List polysemy = new ArrayList();
+
+            int start = matcher.start();
+            int end = matcher.end();
+            String word = matcher.group()
+                    .replaceAll("、(.*?)、", "$1");
+            int length = word.length();
+            String preWord = content.substring(start - length, start);
+            String nexWord = content.substring(end, end + length);
+            polysemy.add(removeSquares(preWord));
+            polysemy.add(removeSquares(word));
+            polysemy.add(removeSquares(nexWord));
+
+            res.add(polysemy);
+        }
+        return res;
+    }
+
     private static String removeSquares(String txt) {
-        return txt.replaceAll("\\[\\[(.*?)\\]\\]", "$1");
+        return txt
+                .replaceAll("\\[\\[(.*?)\\]\\]", "$1")
+                .replaceAll("\\[(.*?)\\]", "$1")
+                .replaceAll("「(.*?)」", "$1");
     }
 
     public static List<String> getDisambiguousTerms(String title) throws ThisPageDoesNotExist {
@@ -117,22 +145,22 @@ public class Utils {
         Matcher matcher = pattern.matcher(content);
 
         List<String> list = new ArrayList();
-        while(matcher.find()){
+        while (matcher.find()) {
             list.add(removeSquares(matcher.group()));
         }
         return list;
     }
 
-    private static UriComponentsBuilder getUrlBase(String title){
+    private static UriComponentsBuilder getUrlBase(String title) {
         return UriComponentsBuilder.fromHttpUrl(WIKI_API_PREFIX)
-                .queryParam("action","query")
-                .queryParam("format","json")
-                .queryParam("titles",title);
+                .queryParam("action", "query")
+                .queryParam("format", "json")
+                .queryParam("titles", title);
     }
 
-    private static UriComponents getRedirectUriComponents(String title){
+    private static UriComponents getRedirectUriComponents(String title) {
         return getUrlBase(title)
-                .queryParam("redirects","")
+                .queryParam("redirects", "")
                 .build();
     }
 }
