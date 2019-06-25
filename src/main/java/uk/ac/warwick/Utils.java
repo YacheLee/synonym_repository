@@ -40,6 +40,23 @@ public class Utils {
         return queryNode.get("redirects").elements().next().get("to").asText();
     }
 
+    public static List<String> getCategories(String title) {
+        String url = WIKI_API_PREFIX+"?action=query&prop=categories&rvlimit=1&rvprop=content&format=json&titles="+title;
+        ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
+        JsonNode queryNode = forEntity.getBody().get("query");
+        JsonNode page = queryNode.get("pages").elements().next();
+
+        List<String> categories = new ArrayList<>();
+        if(page.has("categories")){
+            Iterator<JsonNode> iterator = page.get("categories").iterator();
+            while(iterator.hasNext()){
+                JsonNode categoryNode = iterator.next();
+                categories.add(categoryNode.get("title").asText());
+            }
+        }
+        return categories;
+    }
+
     public static List<String> getSynonyms(String title) throws ThisPageDoesNotExist {
         List<String> res = new ArrayList();
         if(!isRedirected(title)){

@@ -33,6 +33,13 @@ public class UtilsTest {
     }
 
     @Test
+    public void testGetCategories(){
+        Assert.assertEquals(Utils.getCategories("台大").toString(),"[]");
+        Assert.assertEquals(Utils.getCategories("北大").toString(),"[Category:二字亞洲相關消歧義, Category:全部主條目消歧義頁面, Category:全部消歧義頁面]");
+        Assert.assertEquals(Utils.getCategories("彰化").toString(),"[Category:二字臺灣地名消歧義, Category:全部主條目消歧義頁面, Category:全部消歧義頁面]");
+    }
+
+    @Test
     public void getSynonymsWithoutRedirection() throws ThisPageDoesNotExist {
         Assert.assertEquals(Utils.getSynonyms("國立臺灣大學").toString(), "[台湾大学, 臺灣大學, 臺大, 國立台灣大學, 国立台湾大学, 台灣大學, 台大, 椰林大道, 國立台灣大學水源校區, 國立台灣大學宿舍]");
     }
