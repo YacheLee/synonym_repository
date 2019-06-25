@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.warwick.exceptions.ThisPageDoesNotExist;
 
 import java.util.ArrayList;
@@ -15,7 +16,12 @@ public class Utils {
     final static RestTemplate restTemplate = new RestTemplate();
 
     public static String getPageContent(String title) throws ThisPageDoesNotExist {
-        String url = WIKI_API_PREFIX+"?action=query&prop=revisions&rvlimit=1&rvprop=content&format=json&titles=" + title;
+        String url = getUrlBase(title)
+                .queryParam("prop","revisions")
+                .queryParam("rvlimit","1")
+                .queryParam("rvprop","content")
+                .build().toString();
+
         ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
         JsonNode pagesNode = forEntity.getBody().get("query").get("pages");
         if(pagesNode.has("-1") || !pagesNode.iterator().hasNext())
@@ -25,13 +31,18 @@ public class Utils {
     }
 
     public static boolean isRedirected(String title) throws ThisPageDoesNotExist {
-        String url = WIKI_API_PREFIX+"?action=query&format=json&redirects&titles=" + title;
+        String url = getUrlBase(title)
+                .queryParam("redirects","")
+                .build().toString();
         ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
         return forEntity.getBody().get("query").has("redirects");
     }
 
     public static String getRedirectTitle(String title) {
-        String url = WIKI_API_PREFIX+"?action=query&format=json&redirects&titles=" + title;
+        String url = getUrlBase(title)
+                .queryParam("redirects","")
+                .build().toString();
+
         ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
         JsonNode queryNode = forEntity.getBody().get("query");
         if(!queryNode.has("redirects"))
@@ -41,7 +52,11 @@ public class Utils {
     }
 
     public static List<String> getCategories(String title) {
-        String url = WIKI_API_PREFIX+"?action=query&prop=categories&rvlimit=1&rvprop=content&format=json&titles="+title;
+        String url = getUrlBase(title)
+                .queryParam("prop", "categories")
+                .queryParam("rvlimit", "1")
+                .queryParam("rvprop", "content").build().toString();
+
         ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
         JsonNode queryNode = forEntity.getBody().get("query");
         JsonNode page = queryNode.get("pages").elements().next();
@@ -82,5 +97,12 @@ public class Utils {
             redirects.add(redirectTitle);
             return redirects;
         }
+    }
+
+    private static UriComponentsBuilder getUrlBase(String title){
+        return UriComponentsBuilder.fromHttpUrl(WIKI_API_PREFIX)
+                .queryParam("action","query")
+                .queryParam("format","json")
+                .queryParam("titles",title);
     }
 }
