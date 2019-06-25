@@ -50,6 +50,14 @@ public class UtilsTest {
     }
 
     @Test
+    public void isDisambiguousTermTest() throws ThisPageDoesNotExist {
+        Assert.assertTrue(Utils.isDisambiguousTerm("北大"));
+        Assert.assertTrue(Utils.isDisambiguousTerm("彰化"));
+        Assert.assertTrue(Utils.isDisambiguousTerm("中大"));
+        Assert.assertFalse(Utils.isDisambiguousTerm("台大"));
+    }
+
+    @Test
     public void getSynonymsWithRedirection() throws ThisPageDoesNotExist {
         Assert.assertEquals(Utils.getSynonyms("台大").toString(), "[台湾大学, 臺灣大學, 臺大, 國立台灣大學, 国立台湾大学, 台灣大學, 台大, 椰林大道, 國立台灣大學水源校區, 國立台灣大學宿舍, 國立臺灣大學]");
     }
