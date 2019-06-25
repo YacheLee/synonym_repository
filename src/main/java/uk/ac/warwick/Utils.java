@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.warwick.exceptions.ThisPageDoesNotExist;
 
@@ -31,17 +32,13 @@ public class Utils {
     }
 
     public static boolean isRedirected(String title) throws ThisPageDoesNotExist {
-        String url = getUrlBase(title)
-                .queryParam("redirects","")
-                .build().toString();
+        String url = getRedirectUriComponents(title).toString();
         ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
         return forEntity.getBody().get("query").has("redirects");
     }
 
     public static String getRedirectTitle(String title) {
-        String url = getUrlBase(title)
-                .queryParam("redirects","")
-                .build().toString();
+        String url = getRedirectUriComponents(title).toString();
 
         ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
         JsonNode queryNode = forEntity.getBody().get("query");
@@ -104,5 +101,11 @@ public class Utils {
                 .queryParam("action","query")
                 .queryParam("format","json")
                 .queryParam("titles",title);
+    }
+
+    private static UriComponents getRedirectUriComponents(String title){
+        return getUrlBase(title)
+                .queryParam("redirects","")
+                .build();
     }
 }
