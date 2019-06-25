@@ -71,8 +71,14 @@ public class Utils {
 
     public static List<String> getSynonyms(String title) throws ThisPageDoesNotExist {
         List<String> res = new ArrayList();
-        if(!isRedirected(title)){
-            String url = WIKI_API_PREFIX+"?action=query&prop=redirects&format=json&titles=" + title;
+        if(isRedirected(title)){
+            String redirectTitle = getRedirectTitle(title);
+            List<String> redirects = getSynonyms(redirectTitle);
+            redirects.add(redirectTitle);
+            return redirects;
+        }
+        else{
+            String url = getUrlBase(title).queryParam("prop", "redirects").build().toString();
             ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
             Iterator<JsonNode> pages = forEntity.getBody().get("query").get("pages").elements();
             if (pages.hasNext()) {
@@ -85,14 +91,7 @@ public class Utils {
                     }
                 }
             }
-
             return res;
-        }
-        else{
-            String redirectTitle = getRedirectTitle(title);
-            List<String> redirects = getSynonyms(redirectTitle);
-            redirects.add(redirectTitle);
-            return redirects;
         }
     }
 
