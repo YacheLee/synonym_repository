@@ -107,9 +107,9 @@ public class UtilsTest {
 
     @Test
     public void testIfNextPunctuationIsComma(){
-        Assert.assertTrue(Utils.ifNextPunctuationIsComma("123、556", 0));
-        Assert.assertTrue(Utils.ifNextPunctuationIsComma("123、556", 3));
-        Assert.assertFalse(Utils.ifNextPunctuationIsComma("123、556", 4));
-        Assert.assertFalse(Utils.ifNextPunctuationIsComma("123。56、5566.", 3));
+        Assert.assertTrue(Utils.isNextPunctuationIsComma("123、556", 0));
+        Assert.assertTrue(Utils.isNextPunctuationIsComma("123、556", 3));
+        Assert.assertFalse(Utils.isNextPunctuationIsComma("123、556", 4));
+        Assert.assertFalse(Utils.isNextPunctuationIsComma("123。56、5566.", 3));
     }
 }
