@@ -8,9 +8,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.warwick.exceptions.ThisPageDoesNotExist;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,21 +101,27 @@ public class Utils {
         }
     }
 
-    public static List<List<String>> getPolysemy(String content, int n) {
+    public static Set<List<String>> getPolysemy(String content, int n) {
         String insidePattern = ".*?";
-        String completePattern = "、" + insidePattern + "、";
+        Set<List<String>> set = new HashSet();
+        set.addAll(getPolysemy(content, insidePattern, "、" + insidePattern + "、", "、(" + insidePattern + ")、"));
+        set.addAll(getPolysemy(content, insidePattern, "、" + insidePattern + "及", "、(" + insidePattern + ")及"));
+        set.addAll(getPolysemy(content, insidePattern, "、" + insidePattern + "或", "、(" + insidePattern + ")或"));
+        return set;
+    }
 
+    public static Set<List<String>> getPolysemy(String content, String insidePattern, String completePattern, String replacedPattern) {
         Pattern pattern = Pattern.compile(completePattern);
         Matcher matcher = pattern.matcher(content);
 
-        List res = new ArrayList();
+        Set res = new HashSet();
         while (matcher.find()) {
             List<String> polysemy = new ArrayList<>();
 
             int start = matcher.start();
             int end = matcher.end();
             String word = matcher.group()
-                    .replaceAll("、(.*?)、", "$1");
+                    .replaceAll(replacedPattern, "$1");
 
             if(ifNextPunctuationIsComma(content, end)){
                 continue;
