@@ -102,16 +102,19 @@ public class Utils {
     }
 
     public static Set<List<String>> getPolysemy(String content, int n) {
-        String insidePattern = ".*?";
         Set<List<String>> set = new HashSet();
-        set.addAll(getPolysemy(content, "、" + insidePattern + "、", "、(" + insidePattern + ")、"));
-        set.addAll(getPolysemy(content, "、" + insidePattern + "及", "、(" + insidePattern + ")及"));
-        set.addAll(getPolysemy(content, "、" + insidePattern + "或", "、(" + insidePattern + ")或"));
+        if(!content.isEmpty()){
+            String insidePattern = ".*?";
+            content = removeSquares(content);
+            set.addAll(getPolysemy(content, "、" + insidePattern + "、", "、(" + insidePattern + ")、"));
+            set.addAll(getPolysemy(content, "、" + insidePattern + "及", "、(" + insidePattern + ")及"));
+            set.addAll(getPolysemy(content, "、" + insidePattern + "或", "、(" + insidePattern + ")或"));
+        }
         return set;
     }
 
-    public static Set<List<String>> getPolysemy(String content, String completePattern, String replacedPattern) {
-        Pattern pattern = Pattern.compile(completePattern);
+    public static Set<List<String>> getPolysemy(String content, String centralPattern, String replacedPattern) {
+        Pattern pattern = Pattern.compile(centralPattern);
         Matcher matcher = pattern.matcher(content);
 
         Set res = new HashSet();
