@@ -123,7 +123,7 @@ public class Utils {
             String word = matcher.group()
                     .replaceAll(replacedPattern, "$1");
 
-            if (ifNextPunctuationIsComma(content, end)) {
+            if (isNextPunctuationIsComma(content, end)) {
                 continue;
             }
 
@@ -182,7 +182,7 @@ public class Utils {
         return matcher.find();
     }
 
-    public static boolean ifNextPunctuationIsComma(String content, int start) {
+    public static boolean isNextPunctuationIsComma(String content, int start) {
         int n = content.length();
         char[] arr = content.toCharArray();
         while (start < n) {
