@@ -118,11 +118,19 @@ public class Utils {
             int end = matcher.end();
             String word = matcher.group()
                     .replaceAll("、(.*?)、", "$1");
+
+            if(ifNextPunctuationIsComma(content, end)){
+                continue;
+            }
+
             int length = word.length();
             String preWord = content.substring(start - length, start);
             String nexWord = content.substring(end, end + length);
+            word = removeSquares(word);
+
+            if(word.length()>=5) continue;
             polysemy.add(removeSquares(preWord));
-            polysemy.add(removeSquares(word));
+            polysemy.add(word);
             polysemy.add(removeSquares(nexWord));
 
             res.add(polysemy);
@@ -162,5 +170,24 @@ public class Utils {
         return getUrlBase(title)
                 .queryParam("redirects", "")
                 .build();
+    }
+
+    public static boolean isChinesePunctuation(char c){
+        Pattern pattern = Pattern.compile("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]$");
+        Matcher matcher = pattern.matcher(String.valueOf(c));
+        return matcher.find();
+    }
+
+    public static boolean ifNextPunctuationIsComma(String content, int start){
+        int n = content.length();
+        char[] arr = content.toCharArray();
+        while(start < n){
+            char c = arr[start];
+            if(isChinesePunctuation(c)){
+                return c == '、';
+            }
+            start++;
+        }
+        return false;
     }
 }
