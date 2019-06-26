@@ -104,13 +104,13 @@ public class Utils {
     public static Set<List<String>> getPolysemy(String content, int n) {
         String insidePattern = ".*?";
         Set<List<String>> set = new HashSet();
-        set.addAll(getPolysemy(content, insidePattern, "、" + insidePattern + "、", "、(" + insidePattern + ")、"));
-        set.addAll(getPolysemy(content, insidePattern, "、" + insidePattern + "及", "、(" + insidePattern + ")及"));
-        set.addAll(getPolysemy(content, insidePattern, "、" + insidePattern + "或", "、(" + insidePattern + ")或"));
+        set.addAll(getPolysemy(content, "、" + insidePattern + "、", "、(" + insidePattern + ")、"));
+        set.addAll(getPolysemy(content, "、" + insidePattern + "及", "、(" + insidePattern + ")及"));
+        set.addAll(getPolysemy(content, "、" + insidePattern + "或", "、(" + insidePattern + ")或"));
         return set;
     }
 
-    public static Set<List<String>> getPolysemy(String content, String insidePattern, String completePattern, String replacedPattern) {
+    public static Set<List<String>> getPolysemy(String content, String completePattern, String replacedPattern) {
         Pattern pattern = Pattern.compile(completePattern);
         Matcher matcher = pattern.matcher(content);
 
@@ -123,14 +123,13 @@ public class Utils {
             String word = matcher.group()
                     .replaceAll(replacedPattern, "$1");
 
-            if(ifNextPunctuationIsComma(content, end)){
+            if (ifNextPunctuationIsComma(content, end)) {
                 continue;
             }
 
             int length = word.length();
             word = removeSquares(word);
-
-            if(word.length()>=5) continue;
+            if (word.length() > 7) continue;
             String preWord = content.substring(start - length, start);
             String nexWord = content.substring(end, end + length);
 
@@ -183,12 +182,12 @@ public class Utils {
         return matcher.find();
     }
 
-    public static boolean ifNextPunctuationIsComma(String content, int start){
+    public static boolean ifNextPunctuationIsComma(String content, int start) {
         int n = content.length();
         char[] arr = content.toCharArray();
-        while(start < n){
+        while (start < n) {
             char c = arr[start];
-            if(isChinesePunctuation(c)){
+            if (isChinesePunctuation(c)) {
                 return c == '、';
             }
             start++;
