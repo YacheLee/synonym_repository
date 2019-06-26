@@ -112,7 +112,7 @@ public class Utils {
 
         List res = new ArrayList();
         while (matcher.find()) {
-            List polysemy = new ArrayList();
+            List<String> polysemy = new ArrayList<>();
 
             int start = matcher.start();
             int end = matcher.end();
@@ -124,11 +124,12 @@ public class Utils {
             }
 
             int length = word.length();
-            String preWord = content.substring(start - length, start);
-            String nexWord = content.substring(end, end + length);
             word = removeSquares(word);
 
             if(word.length()>=5) continue;
+            String preWord = content.substring(start - length, start);
+            String nexWord = content.substring(end, end + length);
+
             polysemy.add(removeSquares(preWord));
             polysemy.add(word);
             polysemy.add(removeSquares(nexWord));
