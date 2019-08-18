@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.warwick.exceptions.ThisPageDoesNotExist;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 public class SynonymController {
 
-    @GetMapping("/synonym")
-    public List<String> getSynonyms(@RequestParam String title) throws ThisPageDoesNotExist {
-        return Utils.getSynonyms(title);
+    @GetMapping("/api/synonym")
+    public Set<String> getSynonyms(@RequestParam String keyword) throws ThisPageDoesNotExist {
+        return Utils.getSynonyms(keyword);
     }
 }

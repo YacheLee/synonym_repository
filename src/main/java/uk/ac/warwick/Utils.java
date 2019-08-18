@@ -74,17 +74,19 @@ public class Utils {
         return categories.stream().anyMatch(s -> s.contains("消歧義"));
     }
 
-    public static List<String> getSynonyms(String title) throws ThisPageDoesNotExist {
-        List<String> res = new ArrayList();
-        if (isRedirected(title)) {
-            String redirectTitle = getRedirectTitle(title);
-            List<String> redirects = getSynonyms(redirectTitle);
+    public static Set<String> getSynonyms(String keyword) throws ThisPageDoesNotExist {
+        Set<String> res = new HashSet<>();
+        res.add(keyword);
+
+        if (isRedirected(keyword)) {
+            String redirectTitle = getRedirectTitle(keyword);
+            Set<String> redirects = getSynonyms(redirectTitle);
             redirects.add(redirectTitle);
             return redirects;
-        } else if (isDisambiguousTerm(title)) {
-            return getDisambiguousTerms(title);
+        } else if (isDisambiguousTerm(keyword)) {
+            return getDisambiguousTerms(keyword);
         } else {
-            String url = getUrlBase(title).queryParam("prop", "redirects").build().toString();
+            String url = getUrlBase(keyword).queryParam("prop", "redirects").build().toString();
             ResponseEntity<JsonNode> forEntity = restTemplate.getForEntity(url, JsonNode.class);
             Iterator<JsonNode> pages = forEntity.getBody().get("query").get("pages").elements();
             if (pages.hasNext()) {
@@ -152,14 +154,14 @@ public class Utils {
                 .replaceAll("「(.*?)」", "$1");
     }
 
-    public static List<String> getDisambiguousTerms(String title) throws ThisPageDoesNotExist {
+    public static Set<String> getDisambiguousTerms(String title) throws ThisPageDoesNotExist {
         String content = getPageContent(title);
         String insidePattern = ".+";
         String completePattern = "\\[\\[" + insidePattern + "\\]\\]";
         Pattern pattern = Pattern.compile(completePattern);
         Matcher matcher = pattern.matcher(content);
 
-        List<String> list = new ArrayList();
+        Set<String> list = new HashSet<>();
         while (matcher.find()) {
             list.add(removeSquares(matcher.group()));
         }

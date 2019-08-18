@@ -41,14 +41,14 @@ public class UtilsTest {
 
     @Test
     public void getSynonymsWithoutRedirection() throws ThisPageDoesNotExist {
-        Assert.assertEquals(Utils.getSynonyms("國立臺灣大學").toString(), "[台湾大学, 臺灣大學, 臺大, 國立台灣大學, 国立台湾大学, 台灣大學, 台大, 椰林大道, 國立台灣大學水源校區, 國立台灣大學宿舍]");
+        Assert.assertEquals(Utils.getSynonyms("國立臺灣大學").toString(), "[國立臺灣大學, 椰林大道, 國立台灣大學水源校區, 國立台灣大學宿舍, 國立台灣大學, 国立台湾大学, 台湾大学, 臺灣大學, 台灣大學, 臺大, 台大]");
     }
 
     @Test
     public void getSynonymsWithoutRedirection_Empty() throws ThisPageDoesNotExist {
-        Assert.assertEquals(Utils.getSynonyms("彰化").toString(), "[彰化縣, 彰化縣 (清朝), 彰化郡, 彰化市, 彰化市 (省轄市), 彰化市 (州轄市), 彰化街]");
-        Assert.assertEquals(Utils.getSynonyms("北大").toString(), "[北京大學, 國立臺北大學, 东北大学 (日本), 北海道大學, 北陸大學, 北大鎮, 北大路 (新竹市)]");
-        Assert.assertEquals(Utils.getSynonyms("中大").toString(), "[香港中文大學, 香港中文大學（深圳）, 中山大學, 國立中央大學 (南京), 國立中央大學 (汪精衛政府), 國立中央大學, 中央大學 (日本), 中央大學 (韓國), 江苏中大集团, 物产中大集团, 浙江中大集团, 中大建築股份有限公司|中大建築股份]");
+        Assert.assertEquals(Utils.getSynonyms("彰化").toString(), "[彰化街, 彰化市 (州轄市), 彰化郡, 彰化縣 (清朝), 彰化市, 彰化市 (省轄市), 彰化縣]");
+        Assert.assertEquals(Utils.getSynonyms("北大").toString(), "[北京大學, 东北大学 (日本), 國立臺北大學, 北陸大學, 北大路 (新竹市), 北海道大學, 北大鎮]");
+        Assert.assertEquals(Utils.getSynonyms("中大").toString(), "[中央大學 (韓國), 國立中央大學, 中央大學 (日本), 香港中文大學（深圳）, 國立中央大學 (南京), 浙江中大集团, 江苏中大集团, 中大建築股份有限公司|中大建築股份, 中山大學, 香港中文大學, 物产中大集团, 國立中央大學 (汪精衛政府)]");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class UtilsTest {
 
     @Test
     public void getSynonymsWithRedirection() throws ThisPageDoesNotExist {
-        Assert.assertEquals(Utils.getSynonyms("台大").toString(), "[台湾大学, 臺灣大學, 臺大, 國立台灣大學, 国立台湾大学, 台灣大學, 台大, 椰林大道, 國立台灣大學水源校區, 國立台灣大學宿舍, 國立臺灣大學]");
+        Assert.assertEquals(Utils.getSynonyms("台大").toString(), "[國立臺灣大學, 椰林大道, 國立台灣大學水源校區, 國立台灣大學宿舍, 國立台灣大學, 国立台湾大学, 台湾大学, 臺灣大學, 台灣大學, 臺大, 台大]");
     }
 
     @Test
